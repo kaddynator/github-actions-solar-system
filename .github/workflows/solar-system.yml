@@ -78,6 +78,8 @@ jobs:
     needs:
       - unit-testing
       - code-coverage
+    permissions:
+      packages: write  # Add permission to write packages
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
