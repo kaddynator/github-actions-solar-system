@@ -16,21 +16,26 @@ jobs:
   unit-testing:
     name: Unit Testing
     runs-on: ubuntu-latest
+    container:
+      image: node:20  # Use Node.js 20 container image
+      options: --init  # Enable Docker container initialization
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Commented out Setup NodeJS Version step because Node.js is already in the container
+      #- name: Setup NodeJS Version
+      #  uses: actions/setup-node@v3
+      #  with:
+      #    node-version: 20
+    
       - name: Cache NPM dependencies
         uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
-      - name: Setup NodeJS Version
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-    
       - name: Install Dependencies
         run: npm install
     
@@ -43,7 +48,7 @@ jobs:
         with:
           name: Mocha-Test-Result
           path: test-results.xml
-      
+
   code-coverage:
     name: Code Coverage
     runs-on: ubuntu-latest
@@ -71,7 +76,7 @@ jobs:
           name: Code-Coverage-Result
           path: coverage
           retention-days: 5
-  
+
   docker:
     name: Docker Build and Push
     runs-on: ubuntu-latest
@@ -79,7 +84,7 @@ jobs:
       - unit-testing
       - code-coverage
     permissions:
-      packages: write  # Add permission to write packages
+      packages: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -95,7 +100,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: Dockerfile  # Adjust if your Dockerfile is in a different location
+          file: Dockerfile
           push: true
           tags: ghcr.io/${{ github.actor }}/solar-system:${{ github.sha }}
-
