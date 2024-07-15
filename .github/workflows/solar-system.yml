@@ -126,4 +126,4 @@ jobs:
           kubeconfig: ${{ secrets.KUBECONFIG }}
 
       - name: Verify Kubectl Configuration
-        run: kubectl version --short -o yaml
+        run: kubectl version
