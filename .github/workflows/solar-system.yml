@@ -94,7 +94,8 @@ jobs:
         with:
           method: kubeconfig
           kubeconfig: '${{ secrets.KUBECONFIG }}'
-      - run: kubectl version --short 
+      - continue-on-error: true
+        run: kubectl version
 
   integration-testing:
     runs-on: ubuntu-latest
